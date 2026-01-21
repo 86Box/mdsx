@@ -1,6 +1,38 @@
-CC    := gcc
-STRIP := strip
-PROG  := mdsx
+ifeq "$(OS)" "Windows_NT"
+EXT	?= .dll
+else
+ifeq "$(shell uname -s)" "Darwin"
+EXT	?= .dylib
+else
+EXT	?= .so
+endif
+endif
+DEST	?= mdsx$(EXT)
+CC	?= gcc
+STRIP	?= strip
+ifeq "$(OS)" "Windows_NT"
+CFLAGS	+= -Wl,--out-implib,$(DEST).a
+endif
+ifneq "$(shell $(CC) -dumpmachine | grep -w i.86)" ""
+CFLAGS	+= -march=i386 -msse2 -mfpmath=sse
+else
+ifneq "$(shell $(CC) -dumpmachine | grep -w x86_64)" ""
+CFLAGS	+= -march=x86-64 -msse2 -mfpmath=sse
+else
+ifneq "$(shell $(CC) -dumpmachine | grep -w arm)" ""
+CFLAGS	+= -march=armv7+fp
+else
+ifneq "$(shell $(CC) -dumpmachine | grep -Ew '(arm|aarch)64')" ""
+CFLAGS	+= -march=armv8-a
+endif
+endif
+endif
+endif
+ifeq "$(DEBUG)" "y"
+CFLAGS	+= -DDEBUG -O0 -ggdb
+else
+CFLAGS	+= -O3
+endif
 
 OBJS = edc.c             \
        utils.c           \
@@ -32,9 +64,7 @@ OBJS = edc.c             \
        crypto/whirlpool.c
 
 build:
-ifeq ($(DEBUG), y)
-	@$(CC) -shared -Wl,--out-implib,mdsx.dll.a $(OBJS) -I. -ggdb -DDEBUG -O0 -fomit-frame-pointer -mstackrealign -lz -static -o $(PROG).dll
-else
-	@$(CC) -shared -Wl,--out-implib,mdsx.dll.a $(OBJS) -I. -msse2 -mfpmath=sse -O3 -fomit-frame-pointer -mstackrealign -lz -static -o $(PROG).dll
-	@$(STRIP) $(PROG).dll
+	$(CC) -shared $(CFLAGS) $(OBJS) -I. -fPIC -fomit-frame-pointer -mstackrealign -lz -o $(DEST)
+ifneq "$(DEBUG)" "y"
+	$(STRIP) -x $(DEST)
 endif
