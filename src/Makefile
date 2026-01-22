@@ -3,6 +3,7 @@ EXT	?= .dll
 else
 ifeq "$(shell uname -s)" "Darwin"
 EXT	?= .dylib
+STRIPFLAGS ?= -X
 else
 EXT	?= .so
 endif
@@ -66,5 +67,5 @@ OBJS = edc.c             \
 build:
 	$(CC) -shared $(CFLAGS) $(OBJS) -I. -fPIC -fomit-frame-pointer -lz -o $(DEST)
 ifneq "$(DEBUG)" "y"
-	$(STRIP) -x $(DEST)
+	$(STRIP) $(STRIPFLAGS) $(DEST)
 endif
