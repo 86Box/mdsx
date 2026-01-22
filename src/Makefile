@@ -14,10 +14,10 @@ ifeq "$(OS)" "Windows_NT"
 CFLAGS	+= -Wl,--out-implib,$(DEST).a
 endif
 ifneq "$(shell $(CC) -dumpmachine | grep -w i.86)" ""
-CFLAGS	+= -march=i386 -msse2 -mfpmath=sse
+CFLAGS	+= -march=i386 -msse2 -mfpmath=sse -mstackrealign
 else
 ifneq "$(shell $(CC) -dumpmachine | grep -w x86_64)" ""
-CFLAGS	+= -march=x86-64 -msse2 -mfpmath=sse
+CFLAGS	+= -march=x86-64 -msse2 -mfpmath=sse -mstackrealign
 else
 ifneq "$(shell $(CC) -dumpmachine | grep -w arm)" ""
 CFLAGS	+= -march=armv7+fp
@@ -64,7 +64,7 @@ OBJS = edc.c             \
        crypto/whirlpool.c
 
 build:
-	$(CC) -shared $(CFLAGS) $(OBJS) -I. -fPIC -fomit-frame-pointer -mstackrealign -lz -o $(DEST)
+	$(CC) -shared $(CFLAGS) $(OBJS) -I. -fPIC -fomit-frame-pointer -lz -o $(DEST)
 ifneq "$(DEBUG)" "y"
 	$(STRIP) -x $(DEST)
 endif
