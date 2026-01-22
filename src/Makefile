@@ -65,7 +65,7 @@ OBJS = edc.c             \
        crypto/whirlpool.c
 
 build:
-	$(CC) -shared $(CFLAGS) $(OBJS) -I. -fPIC -fomit-frame-pointer -lz -o $(DEST)
+	$(CC) -shared $(CFLAGS) $(OBJS) -I. -fPIC -fomit-frame-pointer -o $(DEST)
 ifneq "$(DEBUG)" "y"
 	$(STRIP) $(STRIPFLAGS) $(DEST)
 endif
