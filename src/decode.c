@@ -9,7 +9,7 @@
 
 #include <string.h>
 
-#define TC_THROW_FATAL_EXCEPTION	*(char *) 0 = 0
+#define TC_THROW_FATAL_EXCEPTION	*(volatile char *) 0 = 0
 
 #define byte   uint8_t
 #define uint64 uint64_t

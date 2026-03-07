@@ -17,7 +17,7 @@
 #include "pkcs5.h"
 #include "crypto.h"
 
-#define TC_THROW_FATAL_EXCEPTION	*(char *) 0 = 0
+#define TC_THROW_FATAL_EXCEPTION	*(volatile char *) 0 = 0
 
 void hmac_truncate
   (

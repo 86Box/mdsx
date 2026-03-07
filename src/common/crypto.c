@@ -15,7 +15,7 @@
 #include "../common/endian.h"
 #include <string.h>
 
-#define TC_THROW_FATAL_EXCEPTION	*(char *) 0 = 0
+#define TC_THROW_FATAL_EXCEPTION	*(volatile char *) 0 = 0
 
 /* Update the following when adding a new cipher or EA:
 
